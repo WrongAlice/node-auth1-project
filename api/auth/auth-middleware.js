@@ -1,3 +1,4 @@
+
 /*
   If the user does not have a session saved in the server
 
@@ -7,6 +8,7 @@
   }
 */
 function restricted() {
+  const err = new Error('You shall not pass!');
 
 }
 
@@ -19,6 +21,7 @@ function restricted() {
   }
 */
 function checkUsernameFree() {
+  const err = new Error('Username taken');
 
 }
 
@@ -31,6 +34,7 @@ function checkUsernameFree() {
   }
 */
 function checkUsernameExists() {
+  const err = new Error('Invalid credentials');
 
 }
 
@@ -43,6 +47,7 @@ function checkUsernameExists() {
   }
 */
 function checkPasswordLength() {
+  const err = new Error('Password must be longer than 3 chars');
 
 }
 
