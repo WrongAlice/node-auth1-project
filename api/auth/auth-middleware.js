@@ -1,5 +1,5 @@
-const User = require('../../users/users-model');
-console.log(User)
+const User = require('../users/users-model');
+
 /*
   If the user does not have a session saved in the server
 
@@ -8,17 +8,10 @@ console.log(User)
     "message": "You shall not pass!"
   }
 */
-const restricted = ( req, res, next ) => {
-  if ( req.session && req.session.user ) {
-    next();
-  } else {
-    res.status(401).json({ message: 'You shall not pass!' });
-  }
+function restricted( req, res, next ) {
+  console.log('restricted')
+  next()
 }
-
-
-
-
 
 /*
   If the username in req.body already exists in the database
@@ -28,16 +21,18 @@ const restricted = ( req, res, next ) => {
     "message": "Username taken"
   }
 */
-const checkUsernameFree = async ( req, res, next) => {
+async function checkUsernameFree ( req, res, next) {
   try {
-    const user = await User.findBy({ username: req.body.username });
-    if ( user.username === req.body.username && user.password === req.body.password ) {
-      next();
-    } else {
-      res.status(422).json({ message: 'Username taken' });
+    const users = await User.findBy({ username: req.body.username })
+    if ( !users.length ) {
+      next()
+    }
+    else {
+      next({ "message": "Username taken", status: 422 }) 
     }
   } catch (err) {
-    next(err);
+    next(err)
+
   }
 }
 
@@ -50,7 +45,7 @@ const checkUsernameFree = async ( req, res, next) => {
     "message": "Invalid credentials"
   }
 */
-const checkUsernameExists = async ( req, res, next) => {
+ async function checkUsernameExists ( req, res, next){
   try {
     const user = await User.findBy({ username: req.body.username });
     if ( !user.username ) {
@@ -73,7 +68,7 @@ const checkUsernameExists = async ( req, res, next) => {
     "message": "Password must be longer than 3 chars"
   }
 */
-const checkPasswordLength  = ( req, res, next) => { 
+function checkPasswordLength ( req, res, next) { 
   try {
     if(! req.body.password || req.body.password.length < 3) {
       res.status(422).json({ message: 'Password must be longer than 3 chars' });
