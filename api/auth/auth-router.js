@@ -10,33 +10,33 @@ const
   checkPasswordLength,
 } = require("./auth-middleware");
 
-router.post("register", checkPasswordLength, checkUsernameFree, async (req, res, next) => {
-    try {
-      const hash = await bcrypt.hash(req.body.password, 10);
-      const newUser = await User.add({...req.body, password: hash});
-      req.session.user = newUser;
-      res.status(201).json(newUser);
-      } catch (error) {
-        res.status(500).json({ message: "Error registering new user" });
-        }
-        });
+router.post("/register", checkPasswordLength, checkUsernameFree, (req, res, next) => {
+
+      const { username, password } = req.body;
+      const hash = bcrypt.hashSync(password, 10);
+
+      User.add({ username, password: hash })
+      .then(saved => {
+        res.status(201).json(saved);  
+      })
+      .catch(next);
+    })
+
+     
       
-      
-    router.post("login", checkUsernameExists, async (req, res, next) => {
-      try {
-        const verifiedUser = await User.findBy({ username: req.body.username });
-        const passwordValid = await bcrypt.compare(req.body.password, user.password);
-        if (!passwordValid) {
-          res.status(401).json({ message: "Invalid Password" });
-        } 
-          else {
-          req.session.user = verifiedUser;
-          res.status(200).json(verifiedUser);
-        }
-      } catch (error) {
-        res.status(500).json({ message: "Error logging in" });
+    router.post("/login", checkUsernameExists, (req, res, next) => {
+     const { password } = req.body;
+     if (bcrypt.compareSync(password, req.user.password)) {
+       //make it so that the cookie is set on the client
+       //make it so server stores a session with a session id
+       req.session.user = req.user; //this line of code does the above gives the req.session and cookie
+       res.json({ message: `Welcome ${req.user.username}!` });
+     } else {
+        next({ status: 401, message: "Incorrect password u fucking dingus" })
       }
     });
+
+
 
     
 
@@ -47,12 +47,5 @@ router.post("register", checkPasswordLength, checkUsernameFree, async (req, res,
         req.session.destroy();
         res.status(200).json({message: "Logged out"});
       })
-
-
-
-
-
-    
-
 
 module.exports = router
