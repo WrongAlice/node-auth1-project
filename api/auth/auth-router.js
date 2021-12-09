@@ -43,9 +43,19 @@ router.post("/register", checkPasswordLength, checkUsernameFree, (req, res, next
 
 
        
-      router.get("logout", (req,res, next) => {
-        req.session.destroy();
-        res.status(200).json({message: "Logged out"});
-      })
+      router.get("/logout", (req,res, next) => {
+       if (req.session.user) {
+          req.session.destroy(err => {
+            if (err) {
+              next(err);
+            } else {
+              res.status(204).end();
+            }
+          });
+        } else {
+          res.status(401).json({ message: "No user to log out" });
+        }
+      });
+
 
 module.exports = router
