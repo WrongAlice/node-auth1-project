@@ -9,9 +9,13 @@ const User = require('../users/users-model');
   }
 */
 function restricted( req, res, next ) {
-  console.log('restricted')
-  next()
+ if (req.session.user) { // if the user has a session saved in the server. no cookie no session
+    next(); // allow them to continue
+  } else {// if the user does not have a session saved in the server
+    next({ status: 401, message: 'You shall not pass!' }); // send them to the login page
+  }
 }
+
 
 /*
   If the username in req.body already exists in the database
