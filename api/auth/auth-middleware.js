@@ -28,7 +28,7 @@ function restricted( req, res, next ) {
 async function checkUsernameFree ( req, res, next) {
   try {
     const users = await User.findBy({ username: req.body.username })
-    if ( !users.length ) {
+    if ( !users.length) {
       next()
     }
     else {
@@ -52,7 +52,6 @@ async function checkUsernameFree ( req, res, next) {
     const users = await User.findBy({ username: req.body.username });
   
     if ( users.length ) {
-      req.user = users[0];
       next()
     }
     else {
@@ -90,3 +89,8 @@ module.exports = {
   checkUsernameExists,
   checkPasswordLength,
 };
+
+
+//please write a function called lastElement that accepts a single array argument. the function
+//should return the last element of the array. if the array is empty, return undefined.
+

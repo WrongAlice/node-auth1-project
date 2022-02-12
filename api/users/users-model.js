@@ -20,15 +20,15 @@ return db('users').where(filter)
 function findById(user_id) {
 return db('users')
 .select('user_id', 'username')
-.where({ user_id }).first()
+.where('user_id', user_id).first()
 }
 
 /**
   resolves to the newly inserted user { user_id, username }
  */
 async function add(user) {
-  const [id] = await db('users').insert(user, 'user_id')
-  return await findById(id)
+  const [id] = await db('users').insert(user)
+  return findById(id)
 
 }
 
